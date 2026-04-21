@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict
 import os
 
-from server.env.environment import ITMarginEnv
-from server.inference import get_brain
+from .env.environment import ITMarginEnv
+from .inference import get_brain
 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
