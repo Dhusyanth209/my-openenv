@@ -6,7 +6,7 @@ colorTo: purple
 sdk: docker
 pinned: true
 license: mit
-short_description: OpenEnv Grand Finale - Enterprise AI Forensic Auditor powered by Meta Llama-3
+short_description: Enterprise AI Forensic Auditor powered by Llama-3
 ---
 
 # 🦅 MetaAuditor Enterprise // OpenEnv Grand Finale
