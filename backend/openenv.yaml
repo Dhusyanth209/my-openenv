@@ -1,0 +1,67 @@
+spec_version: 1
+name: meta-auditor-enterprise
+type: container
+version: "1.0.0"
+description: >
+  An integrated enterprise-level auditor and margin manager.
+  Navigate multi-app data (HR, Finance, Ops) to identify 'Margin Leaks' 
+  and reinvest recovered capital into strategic AI automation.
+
+runtime:
+  language: python
+  version: "3.10"
+
+app:
+  entrypoint: server/app.py
+  port: 7860
+
+tags:
+  - openenv
+  - meta
+  - scaler-ai
+  - forensic-audit
+  - finance
+  - long-horizon
+
+action_space:
+  pay_hike:
+    type: integer
+    range: [0, 10]
+  reskill_budget:
+    type: float
+    range: [0.0, 20.0]
+  automation_investment:
+    type: float
+    range: [0.0, 50.0]
+  audit_action:
+    type: object
+    properties:
+      leak_id: { type: string }
+      key: { type: string }
+    description: "Submit a reconciliation key for a detected leak to recover capital."
+  bidding_strategy:
+    type: string
+    values: ["conservative", "balanced", "aggressive"]
+
+observation_space:
+  quarter: { type: integer }
+  financials:
+    type: object
+    properties:
+      revenue: { type: float }
+      op_margin_pct: { type: float }
+      audited_recovery_total: { type: float }
+  audit_pipeline:
+    type: array
+    items: { type: object }
+  multi_app_sync:
+    type: object
+    description: "Disparate data from Workday, SAP, and OpsPortal for cross-app reconciliation."
+
+reward:
+  score:
+    type: float
+    description: "Accuracy of audits + Margin stability."
+
+author: Dhusyanth03
+hf_space: "https://huggingface.co/spaces/Dhusyanth03/meta-auditor-enterprise"
