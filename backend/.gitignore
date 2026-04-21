@@ -16,7 +16,7 @@ secret.env
 !.env.example
 .venv/
 venv/
-env/
+# env/ removed to allow server/env package
 .env
 
 # HuggingFace / ML artifacts

@@ -101,16 +101,16 @@ export function EnvironmentConsole() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-zinc-600 mb-4">
-            Frame 3 · OpenAPI Execution Terminal
+          <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-amber-500 mb-4 px-4 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 w-fit mx-auto">
+            Operational Protocol: ACTIVE SCAN
           </p>
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter gradient-text mb-4">
-            Environment Command Console
+            Forensic Audit Terminal
           </h2>
           <p className="text-zinc-500 max-w-xl mx-auto">
-            Zero-shot tool orchestration powered by{" "}
-            <span className="text-zinc-300 font-semibold">Meta Llama-3</span>. Watch the
-            agent reason in real time.
+            Autonomous discrepancy reconciliation powered by{" "}
+            <span className="text-zinc-300 font-semibold">Meta Llama-3</span>. Monitoring
+            cross-app data streams for margin leaks.
           </p>
         </motion.div>
 
@@ -143,8 +143,8 @@ export function EnvironmentConsole() {
                 <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
                 <div className="w-3 h-3 rounded-full bg-green-500/60" />
               </div>
-              <span className="text-[11px] font-mono text-zinc-500 ml-3">
-                openapi_v3.0 — {backendState ? "127.0.0.1:7860" : "local_sandbox"}
+              <span className="text-[11px] font-mono text-zinc-500 ml-3 uppercase tracking-widest">
+                Target System: ITFirm-X Forensics // {backendState ? "CONNECTED" : "ESTABLISHING..."}
               </span>
             </div>
 
@@ -204,16 +204,24 @@ export function EnvironmentConsole() {
 
                                 {/* Execute button */}
                                 <motion.button
-                                  whileHover={{ scale: 1.02, boxShadow: "0 0 30px 5px rgba(129,140,248,0.3)" }}
+                                  whileHover={{ scale: 1.02, boxShadow: "0 0 30px 5px rgba(245,158,11,0.3)" }}
                                   whileTap={{ scale: 0.97 }}
                                   onClick={handleExecute}
                                   disabled={isExecuting}
-                                  className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60"
-                                  style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
+                                  className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60 relative overflow-hidden"
+                                  style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}
                                 >
+                                  {isExecuting && (
+                                    <motion.div
+                                      initial={{ x: "-100%" }}
+                                      animate={{ x: "100%" }}
+                                      transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                                      className="absolute inset-0 bg-white/20 skew-x-12"
+                                    />
+                                  )}
                                   {isExecuting
-                                    ? <><Zap size={14} className="animate-bounce" />Executing…</>
-                                    : <><Play size={14} fill="white" />Execute Step</>}
+                                    ? <><Zap size={14} className="animate-bounce" />SCANNING DISCREPANCIES…</>
+                                    : <><Play size={14} fill="white" />Start Forensic Run</>}
                                 </motion.button>
                               </>
                             )}

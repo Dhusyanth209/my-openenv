@@ -94,13 +94,14 @@ export function MetricsGrid() {
           className="text-center mb-16"
         >
           <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-zinc-600 mb-4">
-            Frame 4 · Real-Time Intelligence
+            Intelligence Stream 04 // Dynamic Assessment
           </p>
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter gradient-text mb-4">
-            Integrated Performance Metrics
+            Forensic Impact Analysis
           </h2>
           <p className="text-zinc-500 max-w-xl mx-auto">
-            Live reward scaling, schema drift detection, and long-horizon execution — all in one view.
+            Real-time projection of recovered capital and margin stabilization. 
+            Auditing towards the $25M Enterprise Recovery Target.
           </p>
         </motion.div>
 
@@ -108,9 +109,9 @@ export function MetricsGrid() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-5xl mx-auto">
           {[
             { icon: TrendingUp, label: "Operating Margin", value: `${visibleStats.margin.toFixed(1)}%`, color: "#818cf8", change: `+${rewardDelta}%` },
-            { icon: DollarSign, label: "Capital Recovered", value: `₹${visibleStats.recovery.toFixed(1)}M`, color: "#34d399", change: "This cycle" },
-            { icon: Activity, label: "Agent Steps", value: visibleStats.steps, color: "#c084fc", change: "Continuous" },
-            { icon: Shield, label: "RBAC Status", value: "SECURE", color: "#38bdf8", change: "JWT Valid" },
+            { icon: DollarSign, label: "Audit Recovery", value: `₹${visibleStats.recovery.toFixed(1)}M`, color: "#fbbf24", change: "Verified Leakage" },
+            { icon: Activity, label: "Agent Steps", value: visibleStats.steps, color: "#c084fc", change: "Non-Stop" },
+            { icon: Shield, label: "RBAC Status", value: "AUTHORIZED", color: "#38bdf8", change: "Token: Auditor" },
           ].map((kpi, i) => (
             <motion.div
               key={kpi.label}
@@ -118,8 +119,10 @@ export function MetricsGrid() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="p-5 rounded-2xl glass"
+              className="p-5 rounded-2xl glass group relative overflow-hidden"
+              whileHover={{ scale: 1.02 }}
             >
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               <div className="flex items-center gap-2 mb-3">
                 <kpi.icon size={14} style={{ color: kpi.color }} />
                 <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{kpi.label}</span>
@@ -130,6 +133,21 @@ export function MetricsGrid() {
               <div className="text-[10px] text-zinc-600 font-mono mt-1">{kpi.change}</div>
             </motion.div>
           ))}
+        </div>
+
+        {/* ── Target Horizon Overlay ── */}
+        <div className="max-w-5xl mx-auto mb-10 p-1 rounded-full bg-slate-900 border border-white/5 relative overflow-hidden">
+          <motion.div 
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(100, (visibleStats.recovery / 25) * 100)}%` }}
+            className="h-2 rounded-full bg-gradient-to-r from-amber-500 to-indigo-500 relative"
+          >
+             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
+          </motion.div>
+          <div className="absolute inset-0 flex items-center justify-between px-6 text-[9px] font-bold tracking-widest text-white/40 uppercase">
+             <span>Recovery Progress</span>
+             <span>Goal: ₹25M Target</span>
+          </div>
         </div>
 
         {/* Main 3-col grid */}

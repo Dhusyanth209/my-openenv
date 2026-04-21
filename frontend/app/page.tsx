@@ -7,6 +7,7 @@ import { EnvironmentConsole } from "@/components/console";
 import { MetricsGrid } from "@/components/metrics";
 import { SmeFooter } from "@/components/sme";
 import { DocsModal } from "@/components/docs-modal";
+import Chatbot from "@/components/chatbot";
 
 export default function Home() {
   const [isDocsOpen, setIsDocsOpen] = useState(false);
@@ -23,7 +24,7 @@ export default function Home() {
           <div className="flex items-center gap-2.5 font-extrabold text-lg tracking-tighter">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-black" style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}>M</div>
             <span className="gradient-text-primary">MetaAuditor</span>
-            <span className="text-zinc-600 font-normal text-sm tracking-normal">Adversity</span>
+            <span className="text-amber-500/50 font-normal text-[10px] tracking-widest uppercase ml-1">Master Auditor</span>
           </div>
 
           {/* Links */}
@@ -39,9 +40,9 @@ export default function Home() {
             <button
               onClick={() => setIsDocsOpen(true)}
               className="text-[11px] font-bold uppercase tracking-widest px-4 py-2 rounded-full text-white"
-              style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
+              style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}
             >
-              Judges&apos; Guide
+              Auditor Protocol
             </button>
           </div>
         </div>
@@ -69,6 +70,9 @@ export default function Home() {
 
       {/* Documentation Modal */}
       <DocsModal isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
+
+      {/* Floating Copilot */}
+      <Chatbot />
     </main>
   );
 }

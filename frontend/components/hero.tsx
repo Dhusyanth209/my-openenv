@@ -11,7 +11,7 @@ const MORPHS = [
     label: "Theory of Mind",
     color: "#818cf8",
     glow: "rgba(129,140,248,0.5)",
-    phrase: ["Discover", "Emergent Strategic", "Behavior"],
+    phrase: ["Initialize", "Forensic", "Reconciliation"],
   },
   {
     id: "reward",
@@ -19,7 +19,7 @@ const MORPHS = [
     label: "Reward Scaling",
     color: "#c084fc",
     glow: "rgba(192,132,252,0.5)",
-    phrase: ["Discover", "Long-Horizon", "Planning"],
+    phrase: ["Recover", "$25M Hidden", "Margin Leaks"],
   },
   {
     id: "api",
@@ -27,7 +27,7 @@ const MORPHS = [
     label: "World Modeling",
     color: "#38bdf8",
     glow: "rgba(56,189,248,0.5)",
-    phrase: ["Discover", "Recursive Skill", "Amplification"],
+    phrase: ["Stabilize", "Enterprise", "Governance"],
   },
 ];
 
@@ -51,8 +51,8 @@ export function Hero({ onOpenDocs }: { onOpenDocs: () => void }) {
         transition={{ delay: 0.1 }}
         className="mb-10 flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-white/10 text-xs font-semibold tracking-widest uppercase text-zinc-400"
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-        OpenEnv Grand Finale · Live Environment
+        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+        Live Forensic Audit // Target: IT Firm X
       </motion.div>
 
       {/* ── Morphing Icon Core ── */}
@@ -154,13 +154,13 @@ export function Hero({ onOpenDocs }: { onOpenDocs: () => void }) {
         className="flex flex-col sm:flex-row gap-4 mt-12"
       >
         <motion.button
-          whileHover={{ scale: 1.04, boxShadow: "0 0 40px 8px rgba(129,140,248,0.4)" }}
+          whileHover={{ scale: 1.04, boxShadow: "0 0 40px 8px rgba(245,158,11,0.3)" }}
           whileTap={{ scale: 0.97 }}
           onClick={() => window.scrollTo({ top: 900, behavior: "smooth" })}
-          className="group flex items-center gap-3 px-8 py-4 rounded-full font-bold text-sm tracking-wide text-white"
-          style={{ background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)" }}
+          className="group flex items-center gap-3 px-8 py-4 rounded-full font-bold text-sm tracking-wide text-white shadow-xl shadow-amber-500/10"
+          style={{ background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" }}
         >
-          Launch Environment
+          Initialize Audit Session
           <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
         </motion.button>
 
