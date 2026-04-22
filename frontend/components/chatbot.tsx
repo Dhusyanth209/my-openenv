@@ -23,6 +23,31 @@ export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState(MISSION_MESSAGES);
   const [isThinking, setIsThinking] = useState(false);
+  const [input, setInput] = useState("");
+
+  const handleSend = async (queryOverride?: string) => {
+    const query = queryOverride || input;
+    if (!query.trim()) return;
+
+    const userMsg = { role: "user", content: query };
+    setMessages(prev => [...prev, userMsg]);
+    setInput("");
+    setIsThinking(true);
+
+    try {
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+      const data = await res.json();
+      setMessages(prev => [...prev, { role: "assistant", content: data.response }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { role: "assistant", content: "Apologies, I've lost connection to the forensic ledger. Please try again." }]);
+    } finally {
+      setIsThinking(false);
+    }
+  };
 
   // Simulate an initial greeting after a short delay
   useEffect(() => {
@@ -113,11 +138,12 @@ export default function Chatbot() {
             <div className="border-t border-white/5 p-4">
               <div className="mb-3 flex flex-wrap gap-2">
                 {[
-                  { label: "Mission Motive", icon: ShieldAlert },
-                  { label: "Audit Stats", icon: BarChart3 }
+                  { label: "Mission Motive", query: "What is the motive for this audit?", icon: ShieldAlert },
+                  { label: "Audit Stats", query: "How is our OPM and recovery looking?", icon: BarChart3 }
                 ].map((action, i) => (
                   <button
                     key={i}
+                    onClick={() => handleSend(action.query)}
                     className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] text-slate-300 hover:bg-white/10"
                   >
                     <action.icon className="h-3 w-3" />
@@ -125,17 +151,25 @@ export default function Chatbot() {
                   </button>
                 ))}
               </div>
-              <div className="relative">
+              <form 
+                onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+                className="relative"
+              >
                 <input
                   type="text"
-                  placeholder="Auditor query..."
-                  disabled
-                  className="w-100 w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-4 pr-12 text-xs text-white placeholder:text-slate-600 focus:border-amber-500/50 focus:outline-none"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask your Copilot..."
+                  className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-4 pr-12 text-xs text-white placeholder:text-slate-600 focus:border-amber-500/50 focus:outline-none"
                 />
-                <button className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-amber-500/10 p-2 text-amber-500">
+                <button 
+                  type="submit"
+                  disabled={isThinking}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-amber-500/10 p-2 text-amber-500 disabled:opacity-50"
+                >
                   <ChevronRight className="h-4 w-4" />
                 </button>
-              </div>
+              </form>
             </div>
           </motion.div>
         )}

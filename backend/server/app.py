@@ -47,6 +47,22 @@ class ActionRequest(BaseModel):
     token: Optional[str] = None
     audit_action: Optional[AuditAction] = None
 
+class ChatRequest(BaseModel):
+    query: str
+    token: Optional[str] = None
+
+class UserUpdateRequest(BaseModel):
+    name: str
+    department: str
+    employee_id: str
+
+# --- Persistence (Simulated) ---
+USER_PROFILE = {
+    "name": "Guest Auditor",
+    "department": "Forensics",
+    "employee_id": "AUD-000"
+}
+
 # --- Endpoints ---
 @app.post("/login")
 def login(req: LoginRequest):
@@ -67,7 +83,38 @@ def step(action: ActionRequest):
 
 @app.get("/state")
 def state():
-    return {"state": env.get_state()}
+    return {
+        "state": env.get_state(),
+        "user": USER_PROFILE
+    }
+
+@app.post("/user/update")
+def update_user(req: UserUpdateRequest):
+    global USER_PROFILE
+    USER_PROFILE = req.dict()
+    return {"status": "success", "user": USER_PROFILE}
+
+@app.post("/chat")
+def chat(req: ChatRequest):
+    """
+    Intelligent Chatbot logic: uses the current environment observation
+    to provide a context-aware answer from the 'Auditor Brain'.
+    """
+    obs = env.get_state()
+    query = req.query.lower()
+    
+    # Simple logic mapping (can be expanded to an LLM call)
+    if "opm" in query or "margin" in query:
+        response = f"Currently, our Operating Profit Margin is at {obs['financials']['op_margin']}%. We are aiming for >18% to reach our stabilization goal."
+    elif "recovery" in query or "money" in query or "leak" in query:
+        response = f"We have recovered ${obs['financials']['recovery']}M so far. There are still leaks in the APAC payroll that need your reconciliation."
+    elif "motive" in query or "why" in query:
+        response = "The objective is forensic stabilization. We are cross-referencing HR, Finance, and Ops to stop $25M in margin leakage."
+    else:
+        # Fallback to the SME expert logic
+        response = obs['expert_feedback']
+        
+    return {"response": response}
 
 @app.post("/agent/step")
 def agent_step():

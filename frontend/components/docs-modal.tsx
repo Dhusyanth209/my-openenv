@@ -25,14 +25,14 @@ export function DocsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
             <div className="w-full md:w-64 bg-white/[0.03] p-8 border-b md:border-b-0 md:border-r border-white/5">
                 <div className="flex items-center gap-2 mb-8">
                   <div className="w-4 h-4 bg-primary rounded-full" />
-                  <span className="font-bold text-xs uppercase tracking-[0.2em]">Judges' Guide</span>
+                  <span className="font-bold text-xs uppercase tracking-[0.2em]">Auditor Protocol</span>
                 </div>
                 <nav className="space-y-4">
                   {[
-                    { icon: BookOpen, label: "Environment" },
-                    { icon: Target, label: "Objectives" },
-                    { icon: Award, label: "Bonus Prizes" },
-                    { icon: Terminal, label: "API Spec" }
+                    { icon: Terminal, label: "Forensic Logic" },
+                    { icon: Target, label: "Mission ROI" },
+                    { icon: Award, label: "Protocol Bonus" },
+                    { icon: BookOpen, label: "Knowledge Base" }
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-zinc-500 hover:text-white transition-colors cursor-pointer group">
                       <item.icon size={16} className="group-hover:text-primary transition-colors" />
