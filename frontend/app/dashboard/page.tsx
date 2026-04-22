@@ -68,6 +68,10 @@ export default function Dashboard() {
           {/* Links */}
           <div className="hidden md:flex gap-8 text-[11px] font-semibold text-zinc-500 uppercase tracking-widest">
             <button onClick={() => setIsDocsOpen(true)} className="hover:text-white transition-colors">Docs</button>
+            <a href="/protocol" className="hover:text-amber-500 transition-colors flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              Protocol Inspector
+            </a>
             <a href="https://huggingface.co/Dhusyanth03" target="_blank" className="hover:text-white transition-colors">HuggingFace</a>
             <a href="#metrics" className="hover:text-white transition-colors">Benchmarks</a>
           </div>

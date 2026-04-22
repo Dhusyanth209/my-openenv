@@ -154,6 +154,20 @@ def chat(req: ChatRequest):
             "3. **Heuristic rules** (always available, no GPU needed)\n"
             "It reads the full environment state and outputs a JSON action."
         )
+    elif any(w in query for w in ["automation", "strategy", "tip", "suggest", "action"]):
+        response = (
+            "🤖 **Automation Strategy Tip**: \n"
+            "To maximize margin recovery, allocate capital to **automation_investment**. "
+            "It acts as a multiplier on future base operational margins. However, balance this by resolving "
+            "active 'Ghost Payroll' or 'Double Invoice' leaks first using the `audit_action` field to "
+            "regain initial capital."
+        )
+    elif any(w in query for w in ["ghost", "payroll", "double invoice", "discrepancy"]):
+        response = (
+            "🕵️‍♂️ **Specific Leaks Detected**:\n"
+            "The system is currently flagging **Ghost Payroll Anomalies** (e.g., EMP-7821 receiving salary despite no HR registry).\n"
+            "We also see **Double Invoices** linked to Q3 vendor logs. Run a `POST /step` with the correct `leak_id` and `key` to reconcile them."
+        )
     elif any(w in query for w in ["hello", "hi", "hey"]):
         response = f"👋 Hello, {USER_PROFILE['name']}! I'm your Forensic SME Copilot. Ask me about the audit status, how steps work, or our recovery progress."
     elif any(w in query for w in ["help", "what can you"]):
