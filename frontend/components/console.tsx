@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Code2, ChevronDown, Cpu, Wifi, WifiOff, Brain, Zap, Copy, Check } from "lucide-react";
+import { Play, Code2, ChevronDown, Cpu, Wifi, WifiOff, Brain, Zap, Copy, Check, Eye, Bot, KeyRound } from "lucide-react";
 
 const THOUGHT_TRACES = [
   "Analyzing multi-app sync discrepancy between HR and Finance data...",
@@ -28,10 +28,11 @@ const SAMPLE_BODY = `{
 export function EnvironmentConsole() {
   const [expanded, setExpanded] = useState<string | null>("POST /step");
   const [isExecuting, setIsExecuting] = useState(false);
-  const [thoughtIdx, setThoughtIdx] = useState(0);
   const [thoughts, setThoughts] = useState<string[]>([]);
   const [backendState, setBackendState] = useState<any>(null);
   const [copied, setCopied] = useState(false);
+  const [responseData, setResponseData] = useState<Record<string, any>>({});
+  const [loadingEndpoint, setLoadingEndpoint] = useState<string | null>(null);
   const thoughtRef = useRef<HTMLDivElement>(null);
 
   // Poll backend
@@ -53,18 +54,17 @@ export function EnvironmentConsole() {
       thoughtRef.current.scrollTop = thoughtRef.current.scrollHeight;
   }, [thoughts]);
 
-  const handleExecute = async () => {
+  const handleExecuteStep = async () => {
     setIsExecuting(true);
     setThoughts([]);
 
-    // stream thoughts one by one
     for (let i = 0; i < THOUGHT_TRACES.length; i++) {
       await new Promise((r) => setTimeout(r, 700));
       setThoughts((prev) => [...prev, THOUGHT_TRACES[i]]);
     }
 
     try {
-      await fetch("/step", {
+      const res = await fetch("/step", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -73,9 +73,67 @@ export function EnvironmentConsole() {
           audit_action: { leak_id: "LEAK-842", key: "EMP-7821" }
         }),
       });
+      const data = await res.json();
+      setResponseData(prev => ({ ...prev, "POST /step": data }));
     } catch (_) {}
 
     setTimeout(() => setIsExecuting(false), 400);
+  };
+
+  const handleGetState = async () => {
+    setLoadingEndpoint("GET /state");
+    try {
+      const res = await fetch("/state");
+      const data = await res.json();
+      setResponseData(prev => ({ ...prev, "GET /state": data }));
+    } catch (err) {
+      setResponseData(prev => ({ ...prev, "GET /state": { error: "Connection failed" } }));
+    }
+    setLoadingEndpoint(null);
+  };
+
+  const handleAgentStep = async () => {
+    setLoadingEndpoint("POST /agent/step");
+    setThoughts([]);
+    
+    // Show AI thinking animation
+    const agentThoughts = [
+      "🧠 Agent Brain activated — reading environment state...",
+      "📊 Analyzing OPM trajectory and leak pipeline...",
+      "🤖 Llama-3 generating optimal action JSON...",
+      "✅ Action submitted. Evaluating reward...",
+    ];
+    for (let i = 0; i < agentThoughts.length; i++) {
+      await new Promise((r) => setTimeout(r, 500));
+      setThoughts((prev) => [...prev, agentThoughts[i]]);
+    }
+
+    try {
+      const res = await fetch("/agent/step", { method: "POST" });
+      const data = await res.json();
+      setResponseData(prev => ({ ...prev, "POST /agent/step": data }));
+      setThoughts(prev => [...prev, `Reward: ${data.reward} | Model: ${data.model_mode}`]);
+    } catch (err) {
+      setResponseData(prev => ({ ...prev, "POST /agent/step": { error: "Agent inference failed" } }));
+    }
+    setLoadingEndpoint(null);
+  };
+
+  const handleLogin = async () => {
+    setLoadingEndpoint("POST /login");
+    try {
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "admin", password: "openenv2026" }),
+      });
+      const data = await res.json();
+      if (data.token) localStorage.setItem("meta_token", data.token);
+      setResponseData(prev => ({ ...prev, "POST /login": data }));
+    } catch (err) {
+      setResponseData(prev => ({ ...prev, "POST /login": { error: "Auth server unreachable" } }));
+    }
+    setLoadingEndpoint(null);
   };
 
   const handleCopy = () => {
@@ -85,10 +143,10 @@ export function EnvironmentConsole() {
   };
 
   const endpoints = [
-    { path: "POST /step", method: "POST", color: "#818cf8", desc: "Execute one transition in the enterprise environment. The agent reads HR, Finance & Ops state and returns an optimized action.", active: true },
-    { path: "GET /state", method: "GET", color: "#38bdf8", desc: "Fetch the complete multi-app synchronization state including financials, schema drift log, and SME feedback.", active: false },
-    { path: "POST /agent/step", method: "POST", color: "#c084fc", desc: "Autonomous loop — the fine-tuned Llama-3 agent reads state and executes without human input.", active: false },
-    { path: "POST /login", method: "POST", color: "#34d399", desc: "Authenticate with JWT and receive a role-scoped token (Auditor, Manager, Viewer).", active: false },
+    { path: "POST /step", method: "POST", color: "#818cf8", icon: Play, desc: "Execute one transition in the enterprise environment. The agent reads HR, Finance & Ops state and returns an optimized action.", handler: handleExecuteStep },
+    { path: "GET /state", method: "GET", color: "#38bdf8", icon: Eye, desc: "Fetch the complete multi-app synchronization state including financials, schema drift log, and SME feedback.", handler: handleGetState },
+    { path: "POST /agent/step", method: "POST", color: "#c084fc", icon: Bot, desc: "Autonomous loop — the fine-tuned Llama-3 agent reads state and executes without human input.", handler: handleAgentStep },
+    { path: "POST /login", method: "POST", color: "#34d399", icon: KeyRound, desc: "Authenticate with JWT and receive a role-scoped token (Auditor, Manager, Viewer).", handler: handleLogin },
   ];
 
   return (
@@ -109,8 +167,7 @@ export function EnvironmentConsole() {
           </h2>
           <p className="text-zinc-500 max-w-xl mx-auto">
             Autonomous discrepancy reconciliation powered by{" "}
-            <span className="text-zinc-300 font-semibold">Meta Llama-3</span>. Monitoring
-            cross-app data streams for margin leaks.
+            <span className="text-zinc-300 font-semibold">Meta Llama-3</span>. Every endpoint below is live — click to execute.
           </p>
         </motion.div>
 
@@ -186,51 +243,66 @@ export function EnvironmentConsole() {
                           <div className="p-5 space-y-4">
                             <p className="text-zinc-500 text-sm">{ep.desc}</p>
 
-                            {ep.active && (
-                              <>
-                                {/* Request body preview */}
-                                <div className="relative">
-                                  <div className="flex items-center justify-between mb-2">
-                                    <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Request Body</span>
-                                    <button onClick={handleCopy} className="flex items-center gap-1 text-[10px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors">
-                                      {copied ? <Check size={10} className="text-green-400" /> : <Copy size={10} />}
-                                      {copied ? "Copied" : "Copy"}
-                                    </button>
-                                  </div>
-                                  <pre className="text-[11px] font-mono text-zinc-400 p-3 rounded-lg overflow-x-auto" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                                    {SAMPLE_BODY}
-                                  </pre>
+                            {/* Show request body only for POST /step */}
+                            {ep.path === "POST /step" && (
+                              <div className="relative">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Request Body</span>
+                                  <button onClick={handleCopy} className="flex items-center gap-1 text-[10px] font-mono text-zinc-500 hover:text-zinc-300 transition-colors">
+                                    {copied ? <Check size={10} className="text-green-400" /> : <Copy size={10} />}
+                                    {copied ? "Copied" : "Copy"}
+                                  </button>
                                 </div>
-
-                                {/* Execute button */}
-                                <motion.button
-                                  whileHover={{ scale: 1.02, boxShadow: "0 0 30px 5px rgba(245,158,11,0.3)" }}
-                                  whileTap={{ scale: 0.97 }}
-                                  onClick={handleExecute}
-                                  disabled={isExecuting}
-                                  className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60 relative overflow-hidden"
-                                  style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}
-                                >
-                                  {isExecuting && (
-                                    <motion.div
-                                      initial={{ x: "-100%" }}
-                                      animate={{ x: "100%" }}
-                                      transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                                      className="absolute inset-0 bg-white/20 skew-x-12"
-                                    />
-                                  )}
-                                  {isExecuting
-                                    ? <><Zap size={14} className="animate-bounce" />SCANNING DISCREPANCIES…</>
-                                    : <><Play size={14} fill="white" />Start Forensic Run</>}
-                                </motion.button>
-                              </>
+                                <pre className="text-[11px] font-mono text-zinc-400 p-3 rounded-lg overflow-x-auto" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                                  {SAMPLE_BODY}
+                                </pre>
+                              </div>
                             )}
 
-                            {!ep.active && (
-                              <div className="flex items-center gap-2 text-[11px] text-zinc-600 font-mono">
-                                <Code2 size={12} />
-                                <span>Expand the POST /step endpoint to execute a live step</span>
-                              </div>
+                            {/* Execute button for EVERY endpoint */}
+                            <motion.button
+                              whileHover={{ scale: 1.02, boxShadow: `0 0 30px 5px ${ep.color}30` }}
+                              whileTap={{ scale: 0.97 }}
+                              onClick={ep.handler}
+                              disabled={isExecuting || loadingEndpoint === ep.path}
+                              className="flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60 relative overflow-hidden"
+                              style={{ background: `linear-gradient(135deg, ${ep.color}, ${ep.color}cc)` }}
+                            >
+                              {(isExecuting && ep.path === "POST /step") || loadingEndpoint === ep.path ? (
+                                <>
+                                  <motion.div
+                                    initial={{ x: "-100%" }}
+                                    animate={{ x: "100%" }}
+                                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                                    className="absolute inset-0 bg-white/20 skew-x-12"
+                                  />
+                                  <Zap size={14} className="animate-bounce" />
+                                  {ep.path === "POST /step" ? "SCANNING DISCREPANCIES…" : "PROCESSING…"}
+                                </>
+                              ) : (
+                                <>
+                                  <ep.icon size={14} />
+                                  {ep.path === "POST /step" && "Start Forensic Run"}
+                                  {ep.path === "GET /state" && "Fetch Live State"}
+                                  {ep.path === "POST /agent/step" && "Let AI Decide"}
+                                  {ep.path === "POST /login" && "Authenticate Now"}
+                                </>
+                              )}
+                            </motion.button>
+
+                            {/* Response display */}
+                            {responseData[ep.path] && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                              >
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="text-[10px] font-mono text-green-500 uppercase tracking-widest">✓ Response</span>
+                                </div>
+                                <pre className="text-[10px] font-mono text-zinc-400 p-3 rounded-lg overflow-x-auto max-h-48 overflow-y-auto" style={{ background: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.15)" }}>
+                                  {JSON.stringify(responseData[ep.path], null, 2)}
+                                </pre>
+                              </motion.div>
                             )}
                           </div>
                         </motion.div>
@@ -247,7 +319,7 @@ export function EnvironmentConsole() {
                   <span className="text-[11px] font-bold tracking-widest uppercase text-zinc-500">
                     Agent Reasoning Trace
                   </span>
-                  {isExecuting && (
+                  {(isExecuting || loadingEndpoint) && (
                     <span className="ml-auto flex items-center gap-1 text-[10px] font-mono text-purple-400">
                       <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
                       LIVE
@@ -263,7 +335,7 @@ export function EnvironmentConsole() {
                   {thoughts.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-full text-zinc-700 text-xs font-mono text-center gap-3">
                       <Brain size={28} className="opacity-20" />
-                      Hit &quot;Execute Step&quot; to watch <br /> the Llama-3 agent think live
+                      Click any endpoint to watch <br /> the system respond live
                     </div>
                   )}
                   <AnimatePresence>

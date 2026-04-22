@@ -7,6 +7,7 @@ class IdentityProvider:
         self.secret = "meta-scaler-top-secret"
         self.users = {
             "auditor_user": {"password": "auditor_password", "role": "Auditor"},
+            "admin": {"password": "openenv2026", "role": "Auditor"},
             "ceo_user": {"password": "ceo_password", "role": "CEO"}
         }
 
