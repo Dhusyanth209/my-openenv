@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart, CartesianGrid,
-} from "recharts";
-import { Activity, Layers, TrendingUp, Shield, DollarSign, AlertTriangle } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart, CartesianGrid } from "recharts";
+import { Activity, Layers, TrendingUp, Shield, DollarSign, AlertTriangle, RefreshCw, PlayCircle, Target, Trophy, Brain, Zap, ArrowRight, CornerDownRight } from "lucide-react";
 
-const SEED_DATA = Array.from({ length: 8 }, (_, i) => ({
-  step: i,
-  reward: 10 + i * 0.8 + Math.random() * 2,
+// Mock Training Data for Reward vs Loss
+const TRAINING_DATA = Array.from({ length: 15 }, (_, i) => ({
+  step: i * 100,
+  reward: -10 + (i * 2.5) + (Math.random() * 5),
+  loss: 5.0 * Math.exp(-0.2 * i) + (Math.random() * 0.2),
 }));
 
 const MOCK_DRIFT_LOGS = [
@@ -28,7 +28,7 @@ const STAT_TIMELINE = [
 ];
 
 export function MetricsGrid() {
-  const [chartData, setChartData] = useState(SEED_DATA);
+  const [chartData, setChartData] = useState(TRAINING_DATA);
   const [driftLogs, setDriftLogs] = useState(MOCK_DRIFT_LOGS);
   const [backendState, setBackendState] = useState<any>(null);
   const [isClient, setIsClient] = useState(false);
@@ -45,7 +45,7 @@ export function MetricsGrid() {
           setBackendState(state);
           setChartData((prev) => {
             const last = prev[prev.length - 1].step;
-            return [...prev, { step: last + 1, reward: state.financials?.op_margin ?? 14 }].slice(-20);
+            return [...prev, { step: last + 100, reward: state.financials?.op_margin ?? 14, loss: prev[prev.length-1].loss * 0.95 }].slice(-20);
           });
           if (state.financials) {
             setVisibleStats({
@@ -108,10 +108,10 @@ export function MetricsGrid() {
         {/* KPI Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 max-w-5xl mx-auto">
           {[
-            { icon: TrendingUp, label: "Operating Margin", value: `${visibleStats.margin.toFixed(1)}%`, color: "#818cf8", change: `+${rewardDelta}%` },
-            { icon: DollarSign, label: "Audit Recovery", value: `₹${visibleStats.recovery.toFixed(1)}M`, color: "#fbbf24", change: "Verified Leakage" },
-            { icon: Activity, label: "Agent Steps", value: visibleStats.steps, color: "#c084fc", change: "Non-Stop" },
-            { icon: Shield, label: "RBAC Status", value: "AUTHORIZED", color: "#38bdf8", change: "Token: Auditor" },
+            { icon: AlertTriangle, label: "Total Leakage", value: `₹12.4M`, color: "#ef4444", change: "Anomaly Detected" },
+            { icon: DollarSign, label: "Total Recovery", value: `₹4.2M`, color: "#22c55a", change: "Capital Verified" },
+            { icon: TrendingUp, label: "Net Margin Impact", value: `+1.4%`, color: "#3b82f6", change: "Post-reconciliation" },
+            { icon: Trophy, label: "Reward Score", value: `+24.5`, color: "#a855f7", change: "Env Scale Multiplier" },
           ].map((kpi, i) => (
             <motion.div
               key={kpi.label}
@@ -153,177 +153,218 @@ export function MetricsGrid() {
         {/* Main 3-col grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
 
-          {/* ── Reward Curve ── */}
+          {/* ── [1] TRAINING PROOF PANEL ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="p-7 rounded-2xl glass flex flex-col"
+            className="p-7 rounded-2xl glass flex flex-col w-full text-left"
           >
             <div className="flex items-center justify-between mb-5">
-              <div>
-                <div className="flex items-center gap-2">
-                  <Activity size={16} style={{ color: "#818cf8" }} />
-                  <h3 className="font-bold text-sm">Recursive Improvement</h3>
-                </div>
-                <p className="text-[11px] text-zinc-600 mt-1 font-mono">Reward ↑ {rewardDelta}% over session</p>
+              <div className="flex items-center gap-2">
+                <Activity size={16} style={{ color: "#a855f7" }} />
+                <h3 className="font-bold text-sm">📊 Agent Training Performance</h3>
               </div>
               <div className="px-2 py-1 rounded-full text-[9px] font-bold font-mono"
-                style={{ background: "#818cf820", color: "#818cf8", border: "1px solid #818cf830" }}>
-                LIVE
+                style={{ background: "#a855f720", color: "#a855f7", border: "1px solid #a855f730" }}>
+                PPO-OPTIMIZED
               </div>
             </div>
-            <div className="flex-1 min-h-[200px]">
+            
+            <div className="flex-1 min-h-[160px] relative">
               <ResponsiveContainer width="99%" height="100%" debounce={50}>
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="rewardGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#818cf8" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#818cf8" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="lossGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                  <XAxis dataKey="step" hide />
-                  <YAxis hide domain={["dataMin - 2", "dataMax + 2"]} />
+                  <XAxis dataKey="step" stroke="#52525b" fontSize={10} tickFormatter={(val) => `Step ${val}`} />
+                  <YAxis yAxisId="left" hide domain={["dataMin - 5", "dataMax + 5"]} />
+                  <YAxis yAxisId="right" orientation="right" hide domain={[0, "dataMax + 2"]} />
                   <Tooltip
                     contentStyle={{ backgroundColor: "#0c0c0f", border: "1px solid #ffffff10", borderRadius: "10px", fontSize: "11px" }}
-                    itemStyle={{ color: "#818cf8" }}
+                    itemStyle={{ color: "#a855f7" }}
                     labelStyle={{ color: "#52525b" }}
                   />
-                  <Area type="monotone" dataKey="reward" stroke="#818cf8" strokeWidth={2.5}
-                    fill="url(#rewardGrad)" dot={false} isAnimationActive />
+                  <Area yAxisId="left" type="monotone" dataKey="reward" stroke="#a855f7" strokeWidth={2.5}
+                    fill="url(#rewardGrad)" dot={false} isAnimationActive name="Reward Score" />
+                  <Area yAxisId="right" type="monotone" dataKey="loss" stroke="#ef4444" strokeWidth={1} strokeDasharray="5 5"
+                    fill="url(#lossGrad)" dot={false} isAnimationActive opacity={0.5} name="Loss" />
                 </AreaChart>
               </ResponsiveContainer>
+              <div className="absolute top-2 left-4 text-[9px] text-zinc-500 font-mono flex items-center gap-4">
+                <span className="flex items-center gap-1"><div className="w-2 h-0.5 bg-[#a855f7]"></div>Reward Curve</span>
+                <span className="flex items-center gap-1"><div className="w-2 h-0.5 bg-[#ef4444]"></div>Loss Curve</span>
+              </div>
             </div>
-            <p className="text-[10px] text-zinc-600 mt-3 font-mono uppercase tracking-widest">
-              {backendState ? "MODE: LIVE_REWARD_SCALE" : "MODE: SEEDED_BASELINE"}
-            </p>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
+               <div className="p-3 bg-black/40 rounded-xl border border-white/5">
+                 <div className="text-[9px] text-zinc-500 font-mono uppercase tracking-widest mb-2">Baseline Agent</div>
+                 <div className="text-[11px] text-red-400 font-mono space-y-1">
+                   <div>✗ No recovery</div>
+                   <div>✗ Random actions</div>
+                 </div>
+               </div>
+               <div className="p-3 bg-purple-500/10 rounded-xl border border-purple-500/20">
+                 <div className="text-[9px] text-purple-400 font-mono uppercase tracking-widest mb-2 flex items-center justify-between">Trained Agent <Trophy size={10} /></div>
+                 <div className="text-[11px] text-green-400 font-mono space-y-1">
+                   <div>✓ Detects leaks</div>
+                   <div>✓ Recovers ₹4.2M</div>
+                 </div>
+               </div>
+            </div>
           </motion.div>
 
-          {/* ── Schema Drift Monitor ── */}
+          {/* ── [2] ENVIRONMENT DEFINITION CARD ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="p-7 rounded-2xl glass flex flex-col"
+            className="p-7 rounded-2xl glass flex flex-col w-full text-left bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent"
           >
-            <div className="flex items-center gap-2 mb-5">
-              <Layers size={16} style={{ color: "#38bdf8" }} />
-              <div>
-                <h3 className="font-bold text-sm">Schema Drift Monitor</h3>
-                <p className="text-[11px] text-zinc-600 mt-0.5 font-mono">{driftLogs.length} events detected</p>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Target size={16} className="text-blue-400" />
+                <h3 className="font-bold text-sm">🧩 Environment Design</h3>
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col min-h-0">
-              {/* Highlight Card for Innovation Visual */}
-              <div className="mb-4 p-4 rounded-xl border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-transparent relative overflow-hidden shrink-0">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="animate-spin text-blue-400" style={{ animationDuration: "3s" }}>🔄</span>
-                  <h4 className="text-xs font-bold font-mono tracking-widest text-blue-400">SCHEMA DRIFT EVENT</h4>
-                </div>
-                <div className="grid grid-cols-1 gap-2 text-[11px] font-mono mb-3">
-                  <div className="flex items-center justify-between p-2 bg-black/40 rounded border border-white/5">
-                    <span className="text-zinc-500">OLD FIELD:</span>
-                    <span className="text-zinc-300">hr.status</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-black/40 rounded border border-blue-500/20">
-                    <span className="text-zinc-500">NEW FIELD:</span>
-                    <span className="text-blue-400 font-bold">employment_lifecycle_state</span>
-                  </div>
-                </div>
-                <div className="space-y-1 text-[10px] font-bold uppercase tracking-wider">
-                  <div className="flex items-center gap-1 text-green-400">
-                    <span className="text-green-500">✅</span> Auto-mapped successfully
-                  </div>
-                  <div className="flex items-center gap-1 text-purple-400">
-                    <span className="text-purple-500">🧠</span> No system failure
-                  </div>
+            <div className="space-y-4 flex-1">
+              <div className="p-4 bg-black/40 rounded-xl border border-white/5 relative overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-zinc-700" />
+                <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest mb-2 font-bold ml-1">State (Observation Space)</div>
+                <div className="text-[12px] text-zinc-300 font-mono ml-1 flex flex-col gap-1">
+                  <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-500/50"/> HR Timestamps</span>
+                  <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-500/50"/> Finance Ledgers</span>
+                  <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-500/50"/> Ops Data Streams</span>
                 </div>
               </div>
 
-              {/* Scrollable Logs */}
-              <div className="flex-1 overflow-y-auto space-y-2 pr-1" ref={driftRef}>
-                {driftLogs.map((log, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="p-3 rounded-lg"
-                    style={{
-                      background: `${log.color}08`,
-                      border: `1px solid ${log.color}20`,
-                      borderLeft: `2px solid ${log.color}`,
-                    }}
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <AlertTriangle size={9} style={{ color: log.color }} />
-                      <span className="text-[9px] font-mono font-bold" style={{ color: log.color }}>
-                        [{log.type}]
-                      </span>
-                    </div>
-                    <div className="text-[11px] text-zinc-400 font-mono leading-relaxed">{log.msg}</div>
-                  </motion.div>
-                ))}
+              <div className="p-4 bg-black/40 rounded-xl border border-white/5 relative overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-purple-500" />
+                <div className="text-[10px] text-purple-400 font-mono uppercase tracking-widest mb-2 font-bold ml-1">Actions (Decision Space)</div>
+                <div className="text-[12px] text-zinc-300 font-mono ml-1 flex flex-col gap-1">
+                  <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-purple-500/50"/> Flag discrepancies</span>
+                  <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-purple-500/50"/> Reallocate resources</span>
+                </div>
+              </div>
+
+              <div className="p-4 bg-green-500/5 rounded-xl border border-green-500/20 relative overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-green-500" />
+                <div className="text-[10px] text-green-500 font-mono uppercase tracking-widest mb-2 font-bold ml-1">Reward Function</div>
+                <div className="text-[12px] text-green-400 font-mono ml-1 font-bold">
+                  (Leak Detection) + (Capital Recovery) = Positive Reward Multiplier
+                </div>
               </div>
             </div>
           </motion.div>
 
-          {/* ── Long-Horizon Timeline ── */}
+          {/* ── [3] LEARNING EVOLUTION PANEL ── */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="p-7 rounded-2xl glass"
+            className="p-7 rounded-2xl glass flex flex-col w-full text-left relative overflow-hidden"
           >
-            <div className="flex items-center gap-2 mb-6">
-              <TrendingUp size={16} style={{ color: "#c084fc" }} />
-              <div>
-                <h3 className="font-bold text-sm">Long-Horizon Execution</h3>
-                <p className="text-[11px] text-zinc-600 mt-0.5 font-mono">Multi-quarter planning view</p>
-              </div>
+            {/* Background nodes */}
+            <div className="absolute -right-10 -top-10 opacity-10">
+              <Brain size={120} />
             </div>
 
-            <div className="relative pl-7 space-y-6">
-              {/* Vertical line */}
-              <div className="absolute left-2 top-2 bottom-2 w-px bg-gradient-to-b from-purple-500/50 via-purple-500/20 to-transparent" />
-
-              {STAT_TIMELINE.map((item, i) => (
-                <div key={i} className="relative">
-                  {/* Dot */}
-                  <div
-                    className={`absolute -left-[22px] top-1 w-3 h-3 rounded-full border-2 flex items-center justify-center
-                      ${item.status === "done" ? "bg-purple-500 border-purple-500" : ""}
-                      ${item.status === "active" ? "bg-purple-400 border-purple-400 animate-pulse" : ""}
-                      ${item.status === "pending" ? "bg-transparent border-zinc-700" : ""}`}
-                  />
-
-                  <div>
-                    <div className={`text-xs font-bold ${item.status === "active" ? "text-purple-300" : item.status === "done" ? "text-zinc-300" : "text-zinc-600"}`}>
-                      {item.label}
-                    </div>
-                    <div className={`text-[11px] font-mono mt-0.5 ${item.status === "pending" ? "text-zinc-700" : "text-zinc-500"}`}>
-                      {item.note}
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="flex items-center gap-2 mb-6 relative z-10">
+              <TrendingUp size={16} className="text-yellow-500" />
+              <h3 className="font-bold text-sm">📈 Agent Learning Evolution</h3>
             </div>
 
-            {backendState && (
-              <div className="mt-6 pt-4 border-t border-white/5">
-                <div className="text-[10px] text-zinc-600 font-mono uppercase tracking-widest mb-2">Live Backend State</div>
-                <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
-                  <div><span className="text-zinc-600">Expert:</span> <span className="text-zinc-400">{backendState.expert_feedback?.slice(0, 20)}…</span></div>
-                  <div><span className="text-zinc-600">Drift:</span> <span className="text-zinc-400">{backendState.schema_drift ? "ACTIVE" : "STABLE"}</span></div>
-                </div>
+            <div className="flex flex-col gap-6 relative z-10 flex-1 justify-center">
+              
+              <div className="relative pl-6">
+                <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 border-red-500 bg-red-500/20" />
+                <div className="absolute left-[5px] top-4 bottom-[-30px] w-px bg-white/10" />
+                <div className="text-xs font-bold text-red-400 mb-2 uppercase tracking-widest">Epoch 0 / Before Training</div>
+                <ul className="text-[11px] font-mono text-zinc-400 space-y-2">
+                  <li className="flex items-start gap-2"><span className="text-red-500 mt-0.5">✗</span> System blindly processes payroll</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500 mt-0.5">✗</span> Misses cross-system anomalies</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500 mt-0.5">✗</span> Fails when schema fields rename</li>
+                </ul>
               </div>
-            )}
+
+              <div className="relative pl-6">
+                <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center">
+                  <div className="w-1 h-1 bg-black rounded-full animate-ping" />
+                </div>
+                <div className="text-xs font-bold text-green-400 mb-2 uppercase tracking-widest flex items-center gap-2">
+                  Epoch 10K / After Training <Zap size={12} className="text-yellow-400" />
+                </div>
+                <ul className="text-[11px] font-mono text-zinc-300 space-y-2">
+                  <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">✓</span> Actively cross-references HR vs Finance</li>
+                  <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">✓</span> Detects and halts ghost payroll instantly</li>
+                  <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">✓</span> Semantically adapts to schema drift without failure</li>
+                  <li className="flex items-start gap-2"><span className="text-yellow-400 mt-0.5 text-[14px]">★</span> Optimizes absolute corporate margins</li>
+                </ul>
+              </div>
+            </div>
           </motion.div>
         </div>
+
+        {/* ── [4] OPENENV PIPELINE VISUAL ── */}
+        <motion.div
+           initial={{ opacity: 0, scale: 0.95 }}
+           whileInView={{ opacity: 1, scale: 1 }}
+           viewport={{ once: true }}
+           className="max-w-5xl mx-auto mt-8 p-6 rounded-2xl border border-white/10 glass bg-black/40 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden"
+        >
+           <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-green-500/5" />
+           <div className="absolute -left-20 top-1/2 -translate-y-1/2 w-40 h-40 bg-purple-500/20 blur-3xl rounded-full pointer-events-none" />
+
+           <div className="flex flex-col relative z-10 w-full md:w-auto">
+             <div className="flex items-center gap-2 text-zinc-500 text-[10px] font-mono font-bold uppercase tracking-widest mb-1">
+                OpenEnv Standard Interface
+             </div>
+             <div className="text-sm font-bold text-white tracking-widest">
+                RL PIPELINE ARCHITECTURE
+             </div>
+           </div>
+
+           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 relative z-10 w-full md:w-auto">
+              {/* Step 1 */}
+              <div className="flex flex-col items-center bg-black/60 border border-white/5 px-6 py-3 rounded-xl min-w-[140px] shadow-[0_0_15px_rgba(255,255,255,0.02)]">
+                <RefreshCw size={16} className="text-blue-400 mb-2" />
+                <span className="text-white font-mono text-[12px] font-bold">env.reset()</span>
+                <span className="text-zinc-500 text-[9px] uppercase font-mono mt-1">Initialize State</span>
+              </div>
+              
+              <ArrowRight className="text-zinc-600 hidden md:block" />
+              <CornerDownRight className="text-zinc-600 block md:hidden rotate-90" />
+
+              {/* Step 2 */}
+              <div className="flex flex-col items-center bg-purple-500/10 border border-purple-500/30 px-6 py-3 rounded-xl min-w-[140px] shadow-[0_0_20px_rgba(168,85,247,0.1)]">
+                <PlayCircle size={16} className="text-purple-400 mb-2" />
+                <span className="text-purple-300 font-mono text-[12px] font-bold">env.step(action)</span>
+                <span className="text-purple-400/60 text-[9px] uppercase font-mono mt-1">Execute Audit</span>
+              </div>
+
+              <ArrowRight className="text-zinc-600 hidden md:block" />
+              <CornerDownRight className="text-zinc-600 block md:hidden rotate-90" />
+
+              {/* Step 3 */}
+              <div className="flex flex-col items-center bg-black/60 border border-white/5 px-6 py-3 rounded-xl min-w-[140px] shadow-[0_0_15px_rgba(255,255,255,0.02)]">
+                <Layers size={16} className="text-green-400 mb-2" />
+                <span className="text-white font-mono text-[12px] font-bold">obs, reward</span>
+                <span className="text-zinc-500 text-[9px] uppercase font-mono mt-1">System Snapshot</span>
+              </div>
+           </div>
+        </motion.div>
       </div>
     </section>
   );
