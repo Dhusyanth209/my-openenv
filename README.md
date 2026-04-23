@@ -1,3 +1,14 @@
+---
+title: MetaAuditor Enterprise
+emoji: 🦅
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+pinned: true
+license: mit
+short_description: Enterprise AI Forensic Auditor powered by Llama-3
+---
+
 <div align="center">
   <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.png" width="80" alt="Hugging Face Logo" />
   <h1>MetaAuditor Enterprise 🕵️‍♂️💸</h1>
