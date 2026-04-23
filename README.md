@@ -1,12 +1,11 @@
 ---
 title: MetaAuditor Enterprise
-emoji: 🦅
+emoji: 🕵️‍♂️
 colorFrom: indigo
 colorTo: purple
 sdk: docker
-pinned: true
+pinned: false
 license: mit
-short_description: Enterprise AI Forensic Auditor powered by Llama-3
 ---
 
 <div align="center">
