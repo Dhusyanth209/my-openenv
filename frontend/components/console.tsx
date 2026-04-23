@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Code2, ChevronDown, Cpu, Wifi, WifiOff, Brain, Zap, Copy, Check, Eye, Bot, KeyRound } from "lucide-react";
+import { Play, Code2, ChevronDown, Cpu, Wifi, WifiOff, Brain, Zap, Copy, Check, Eye, Bot, KeyRound, ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
 
 const THOUGHT_TRACES = [
   "Analyzing multi-app sync discrepancy between HR and Finance data...",
@@ -190,9 +190,22 @@ export function EnvironmentConsole() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="rounded-2xl overflow-hidden"
+            className="rounded-2xl overflow-hidden relative"
             style={{ border: "1px solid rgba(255,255,255,0.07)", background: "#080a0b" }}
           >
+            {/* Glow Sweep animation */}
+            <AnimatePresence>
+              {isExecuting && (
+                <motion.div
+                  initial={{ left: "-100%" }}
+                  animate={{ left: "200%" }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                  className="absolute top-0 bottom-0 w-[400px] z-50 pointer-events-none"
+                  style={{ background: "linear-gradient(90deg, transparent, rgba(129,140,248,0.1), transparent)", transform: "skewX(-20deg)" }}
+                />
+              )}
+            </AnimatePresence>
             {/* Window chrome */}
             <div className="flex items-center gap-2 px-5 py-3.5 border-b border-white/5" style={{ background: "rgba(255,255,255,0.03)" }}>
               <div className="flex gap-1.5">
@@ -299,53 +312,18 @@ export function EnvironmentConsole() {
                               >
                                 {ep.path === "POST /step" && (
                                   <>
-                                    {/* Leak Evidence Panel */}
-                                    <div className="border border-red-500/30 bg-red-500/5 rounded-xl p-4 relative overflow-hidden mt-4">
+                                    {/* [5] AI DECISION CARD */}
+                                    <div className="border border-purple-500/30 bg-purple-500/5 rounded-xl p-4 mt-4" style={{ boxShadow: "0 0 20px rgba(168,85,247,0.1)" }}>
                                       <div className="flex items-center gap-2 mb-3">
-                                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                                        <h4 className="text-xs font-bold font-mono tracking-widest text-red-500">LEAK DETECTED: Ghost Payroll</h4>
+                                        <Brain size={16} className="text-purple-400" />
+                                        <h4 className="text-sm font-bold font-mono tracking-widest text-purple-400">AI ACTION PLAN</h4>
                                       </div>
-                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] font-mono">
-                                        <div className="p-3 bg-black/40 rounded-lg border border-white/5">
-                                          <div className="text-zinc-500 mb-1">HR System:</div>
-                                          <div className="text-zinc-300">- EMP7821 &rarr; Status: <span className="text-red-400 font-bold">Resigned</span></div>
-                                        </div>
-                                        <div className="p-3 bg-black/40 rounded-lg border border-white/5">
-                                          <div className="text-zinc-500 mb-1">Finance System:</div>
-                                          <div className="text-zinc-300">- EMP7821 &rarr; Salary Paid: <span className="text-red-400 font-bold">₹45,000</span></div>
-                                        </div>
-                                      </div>
-                                      <div className="mt-3 inline-block px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-md text-[10px] font-bold text-red-400/90 uppercase tracking-wider">
-                                        ⚠️ Mismatch: Payment after exit &nbsp;|&nbsp; 💰 Monthly Leakage: ₹45,000
-                                      </div>
-                                    </div>
-
-                                    {/* AI Decision Card */}
-                                    <div className="border border-purple-500/30 bg-purple-500/5 rounded-xl p-4">
-                                      <div className="flex items-center gap-2 mb-3">
-                                        <Brain size={14} className="text-purple-400" />
-                                        <h4 className="text-xs font-bold font-mono tracking-widest text-purple-400">AI ACTION DECISION</h4>
-                                      </div>
-                                      <ul className="text-[11px] font-mono text-zinc-300 space-y-2 ml-1">
-                                        <li className="flex items-center gap-2"><Check size={12} className="text-green-500" /> Block salary payment</li>
-                                        <li className="flex items-center gap-2"><Check size={12} className="text-green-500" /> Flag employee account</li>
-                                        <li className="flex items-center gap-2"><Check size={12} className="text-green-500" /> Recover ₹45,000</li>
-                                        <li className="flex items-center gap-2"><Check size={12} className="text-purple-400" /> Reallocate to automation budget</li>
+                                      <ul className="text-xs font-mono text-zinc-300 space-y-3 ml-1">
+                                        <li className="flex items-center gap-2"><span className="text-red-500 font-bold">❌</span> Block salary disbursement</li>
+                                        <li className="flex items-center gap-2"><span className="text-yellow-500 font-bold">⚠️</span> Flag employee for audit review</li>
+                                        <li className="flex items-center gap-2"><span className="text-green-500 font-bold">💰</span> Recover ₹45,000</li>
+                                        <li className="flex items-center gap-2"><span className="text-blue-500 font-bold">🔄</span> Reallocate to automation investment</li>
                                       </ul>
-                                    </div>
-
-                                    {/* Before vs After */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                      <div className="p-4 rounded-xl border border-white/10 bg-white/5">
-                                        <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-2">📊 Before Execution</div>
-                                        <div className="text-sm font-bold text-zinc-300">OPM: 29.8%</div>
-                                        <div className="text-[11px] text-red-400/80 font-mono mt-1">Leakage: ₹12.4M</div>
-                                      </div>
-                                      <div className="p-4 rounded-xl border border-green-500/20 bg-gradient-to-br from-green-500/10 to-transparent">
-                                        <div className="text-[10px] font-mono text-green-500 uppercase tracking-widest mb-2">📊 After Recovery</div>
-                                        <div className="text-sm font-bold text-green-400">OPM: 31.2%</div>
-                                        <div className="text-[11px] text-green-400/80 font-mono mt-1">Recovered: ₹4.2M</div>
-                                      </div>
                                     </div>
                                   </>
                                 )}
@@ -368,9 +346,48 @@ export function EnvironmentConsole() {
                 ))}
               </div>
 
-              {/* Live Agent Thought Log */}
-              <div className="lg:col-span-2 p-5 flex flex-col">
-                <div className="flex items-center gap-2 mb-4">
+              {/* Live Agent Thought Log (Right Column) */}
+              <div className="lg:col-span-2 p-5 flex flex-col relative h-[700px] overflow-hidden">
+
+                {/* [2] LEAK EVIDENCE PANEL (Top of Right Panel) */}
+                <AnimatePresence>
+                  {responseData["POST /step"] && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      animate={{ opacity: 1, height: "auto", marginBottom: 24 }}
+                      className="border border-red-500/40 bg-red-500/10 rounded-xl p-4 relative overflow-hidden shrink-0"
+                      style={{ boxShadow: "0 0 30px rgba(239,68,68,0.15)" }}
+                    >
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse glow-pulse" />
+                        <h4 className="text-[13px] font-bold font-mono tracking-widest text-red-500">🚨 LEAK EVIDENCE</h4>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3 text-[11px] font-mono">
+                        <div className="p-3 bg-black/60 rounded-lg border border-white/5">
+                          <div className="text-zinc-500 mb-2 uppercase tracking-widest text-[9px] font-bold">HR System</div>
+                          <div className="text-zinc-400 space-y-1">
+                            <div>EMP ID: <span className="text-white">EMP7821</span></div>
+                            <div>Status: <span className="text-red-400 font-bold">Resigned</span></div>
+                            <div>Last Active: <span className="text-white">32 days ago</span></div>
+                          </div>
+                        </div>
+                        <div className="p-3 bg-black/60 rounded-lg border border-white/5">
+                          <div className="text-zinc-500 mb-2 uppercase tracking-widest text-[9px] font-bold">Finance System</div>
+                          <div className="text-zinc-400 space-y-1">
+                            <div>Salary Status: <span className="text-green-400 font-bold">ACTIVE</span></div>
+                            <div>Monthly Pay: <span className="text-red-400 font-bold">₹45,000</span></div>
+                            <div>Cycle: <span className="text-white">Ongoing</span></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3 py-2 px-3 bg-red-500/20 border border-red-500/30 rounded-md text-[11px] font-bold text-red-400 uppercase tracking-wider text-center">
+                        ⚠️ Mismatch Detected &nbsp;|&nbsp; 💰 Leakage: ₹45,000/month
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="flex items-center gap-2 mb-4 shrink-0">
                   <Brain size={14} style={{ color: "#c084fc" }} />
                   <span className="text-[11px] font-bold tracking-widest uppercase text-zinc-500">
                     Agent Reasoning Trace
@@ -383,54 +400,151 @@ export function EnvironmentConsole() {
                   )}
                 </div>
 
-                <div
-                  ref={thoughtRef}
-                  className="flex-1 overflow-y-auto space-y-2 min-h-[300px] max-h-[380px]"
-                  style={{ scrollBehavior: "smooth" }}
-                >
+                {/* [6] ENHANCE AGENT REASONING TRACE */}
+                <div ref={thoughtRef} className="flex-1 overflow-y-auto space-y-0 relative min-h-[150px] mb-4 pr-2" style={{ scrollBehavior: "smooth" }}>
                   {thoughts.length === 0 && (
                     <div className="flex flex-col items-center justify-center h-full text-zinc-700 text-xs font-mono text-center gap-3">
                       <Brain size={28} className="opacity-20" />
                       Click any endpoint to watch <br /> the system respond live
                     </div>
                   )}
+
+                  {thoughts.length > 0 && (
+                    <div className="absolute left-[13px] top-2 bottom-4 w-[2px] bg-white/5" />
+                  )}
+
                   <AnimatePresence>
-                    {thoughts.map((t, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: 12 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className="p-3 rounded-lg text-[11px] font-mono text-zinc-400 leading-relaxed"
-                        style={{
-                          background: "rgba(255,255,255,0.02)",
-                          border: "1px solid rgba(255,255,255,0.04)",
-                          borderLeft: `2px solid ${i === thoughts.length - 1 ? "#c084fc" : "#ffffff10"}`,
-                        }}
-                      >
-                        <span className="text-zinc-600 mr-2">{String(i + 1).padStart(2, "0")}.</span>
-                        {t}
-                      </motion.div>
-                    ))}
+                    {thoughts.map((t, i) => {
+                      // Text highlighting logic
+                      let formattedText = t;
+                      if (formattedText.includes("ghost payroll anomaly")) {
+                        formattedText = formattedText.replace("ghost payroll anomaly", '<span class="text-red-400 bg-red-500/10 px-1 rounded font-bold">ghost payroll anomaly</span>');
+                      }
+                      if (formattedText.includes("Schema drift detected")) {
+                        formattedText = formattedText.replace("Schema drift detected", '<span class="text-blue-400 bg-blue-500/10 px-1 rounded font-bold">Schema drift detected</span>');
+                      }
+                      if (formattedText.includes("capital recovered")) {
+                        formattedText = formattedText.replace("capital recovered", '<span class="text-green-400 bg-green-500/10 px-1 rounded font-bold">capital recovered</span>');
+                      }
+
+                      return (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: 12 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="relative pl-8 py-2 text-[11px] font-mono leading-relaxed"
+                        >
+                          <div className={`absolute left-0 top-3 w-7 h-[2px] ${i === thoughts.length - 1 ? "bg-purple-500" : "bg-white/10"}`} />
+                          <div
+                            className="p-3 rounded-lg border border-white/5"
+                            style={{ background: i === thoughts.length - 1 ? "rgba(192,132,252,0.05)" : "rgba(255,255,255,0.02)" }}
+                            dangerouslySetInnerHTML={{ __html: `<span class="text-zinc-600 mr-2">${String(i + 1).padStart(2, "0")}.</span> ${formattedText}` }}
+                          />
+                        </motion.div>
+                      );
+                    })}
                   </AnimatePresence>
                 </div>
 
-                {/* Step counter */}
-                {backendState && (
-                  <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-2 gap-3">
-                    {[
-                      { label: "OPM", value: `${backendState.financials?.op_margin ?? "—"}%`, color: "#818cf8" },
-                      { label: "Quarter", value: `Q${backendState.quarter ?? 1}`, color: "#c084fc" },
-                    ].map((stat) => (
-                      <div key={stat.label} className="p-3 rounded-lg text-center" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                        <div className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">{stat.label}</div>
-                        <div className="font-mono font-black text-lg mt-1" style={{ color: stat.color }}>{stat.value}</div>
+                {/* [4] SCHEMA DRIFT VISUAL CARD (Bottom of Right Panel) */}
+                <AnimatePresence>
+                  {responseData["POST /step"] && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: "auto", marginTop: 16 }}
+                      className="border border-blue-500/30 bg-blue-500/10 rounded-xl p-4 relative overflow-hidden shrink-0 mt-auto"
+                      style={{ boxShadow: "0 0 30px rgba(56,189,248,0.1)" }}
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-blue-400 animate-spin" style={{ animationDuration: "4s" }}>🔄</span>
+                        <h4 className="text-[13px] font-bold font-mono tracking-widest text-blue-400">SCHEMA DRIFT MONITOR</h4>
                       </div>
-                    ))}
-                  </div>
-                )}
+                      <div className="flex items-center justify-between gap-2 text-[11px] font-mono mb-3 bg-black/40 p-2 rounded-lg border border-white/5">
+                        <div className="flex flex-col text-center w-full">
+                          <span className="text-zinc-500 uppercase tracking-widest text-[8px] mb-1">Old Field</span>
+                          <span className="text-zinc-300">hr.status</span>
+                        </div>
+                        <div className="text-blue-400 animate-pulse">→</div>
+                        <div className="flex flex-col text-center w-full">
+                          <span className="text-zinc-500 uppercase tracking-widest text-[8px] mb-1">New Field</span>
+                          <span className="text-blue-400 font-bold">employment_lifecycle_state</span>
+                        </div>
+                      </div>
+                      <div className="space-y-1.5 text-[10px] font-bold uppercase tracking-wider bg-black/20 p-2 rounded border border-white/5">
+                        <div className="flex items-center gap-2 text-green-400">
+                          <span className="text-green-500">✅</span> Semantic Mapping Complete
+                        </div>
+                        <div className="flex items-center gap-2 text-purple-400">
+                          <span className="text-purple-500">🧠</span> Model Adapted Without Failure
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>
+
+          {/* [3] BEFORE vs AFTER IMPACT CARD (Center Below Main Terminal) */}
+          <AnimatePresence>
+            {responseData["POST /step"] && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-8 mx-auto max-w-4xl border border-white/10 rounded-3xl p-6 glass shadow-2xl relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-transparent to-green-500/5" />
+                
+                <h3 className="text-center text-sm font-bold tracking-[0.2em] uppercase text-zinc-400 mb-6">
+                  📊 Financial Impact Analysis
+                </h3>
+
+                <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
+                  {/* BEFORE */}
+                  <div className="flex-1 w-full bg-black/40 border border-red-500/20 rounded-2xl p-6 shadow-[0_0_30px_rgba(239,68,68,0.05)]">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs font-mono font-bold text-red-400 uppercase tracking-widest">Before Audit</span>
+                      <span className="px-2 py-1 bg-red-500/20 text-red-400 text-[10px] font-bold rounded">HIGH RISK</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-zinc-500 text-[10px] font-mono uppercase">OPM</div>
+                        <div className="text-2xl font-black text-white">29.8%</div>
+                      </div>
+                      <div>
+                        <div className="text-zinc-500 text-[10px] font-mono uppercase">Leakage</div>
+                        <div className="text-2xl font-black text-red-400">₹12.4M</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Arrow separator */}
+                  <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-full border border-white/10 glass shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                    <ArrowRight size={20} className="text-white animate-pulse" />
+                  </div>
+
+                  {/* AFTER */}
+                  <div className="flex-1 w-full bg-black/40 border border-green-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(34,197,94,0.1)] relative overflow-hidden">
+                    <div className="absolute inset-0 bg-green-500/5 glow-pulse" />
+                    <div className="flex items-center justify-between mb-4 relative z-10">
+                      <span className="text-xs font-mono font-bold text-green-400 uppercase tracking-widest">After Audit</span>
+                      <span className="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] font-bold rounded">CONTROLLED</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 relative z-10">
+                      <div>
+                        <div className="text-zinc-500 text-[10px] font-mono uppercase">OPM</div>
+                        <div className="text-2xl font-black text-white flex items-center gap-2">31.2% <TrendingUp size={16} className="text-green-400" /></div>
+                      </div>
+                      <div>
+                        <div className="text-zinc-500 text-[10px] font-mono uppercase">Recovery</div>
+                        <div className="text-2xl font-black text-green-400">₹4.2M</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </section>

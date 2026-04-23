@@ -9,7 +9,7 @@ import { MetricsGrid } from "@/components/metrics";
 import { SmeFooter } from "@/components/sme";
 import { DocsModal } from "@/components/docs-modal";
 import Chatbot from "@/components/chatbot";
-import { User, LogOut, ShieldCheck } from "lucide-react";
+import { User, LogOut, ShieldCheck, AlertTriangle, TrendingUp, DollarSign } from "lucide-react";
 
 export default function Dashboard() {
   const [isDocsOpen, setIsDocsOpen] = useState(false);
@@ -93,29 +93,53 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      {/* ── Total Impact Header (Critical Review Fix) ── */}
-      <div className="pt-24 max-w-5xl mx-auto px-6 relative z-40">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border border-white/10 p-2 rounded-2xl glass shadow-2xl">
-          <div className="p-4 rounded-xl border border-red-500/20 bg-gradient-to-br from-red-500/10 to-transparent flex flex-col items-center justify-center">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-              <span className="text-[10px] text-white/50 font-mono uppercase tracking-widest">Total Leakage Detected</span>
+      {/* ── [1] GLOBAL IMPACT HEADER (Sticky) ── */}
+      <div className="fixed top-16 left-0 right-0 z-40 h-[80px] flex items-center border-b border-white/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]" style={{ background: "rgba(10,12,16,0.8)", backdropFilter: "blur(24px)" }}>
+        <div className="container mx-auto px-6 h-full flex flex-row items-center justify-between overflow-x-auto hide-scrollbar">
+          <div className="flex items-center gap-12 min-w-max mx-auto">
+            {/* KPI 1 */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center glow-pulse" style={{ boxShadow: "0 0 20px rgba(239,68,68,0.2)" }}>
+                 <AlertTriangle size={18} className="text-red-500" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest mb-0.5">Total Leakage Detected</div>
+                <div className="text-[24px] font-black text-red-500 leading-none">₹12.4M</div>
+              </div>
             </div>
-            <span className="text-2xl font-black text-red-400">₹12.4M</span>
-          </div>
-          <div className="p-4 rounded-xl border border-green-500/20 bg-gradient-to-br from-green-500/10 to-transparent flex flex-col items-center justify-center">
-            <div className="flex items-center gap-2 mb-1">
-              <ShieldCheck size={12} className="text-green-400" />
-              <span className="text-[10px] text-white/50 font-mono uppercase tracking-widest">Total Recovered</span>
+
+            {/* KPI 2 */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center" style={{ boxShadow: "0 0 20px rgba(34,197,94,0.15)" }}>
+                 <ShieldCheck size={18} className="text-green-400" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest mb-0.5">Total Recovered</div>
+                <div className="text-[24px] font-black text-green-400 leading-none">₹4.2M</div>
+              </div>
             </div>
-            <span className="text-2xl font-black text-green-400">₹4.2M</span>
-          </div>
-          <div className="p-4 rounded-xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-transparent flex flex-col items-center justify-center">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-              <span className="text-[10px] text-white/50 font-mono uppercase tracking-widest">Margin Improvement</span>
+
+            {/* KPI 3 */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center" style={{ boxShadow: "0 0 20px rgba(168,85,247,0.15)" }}>
+                 <TrendingUp size={18} className="text-purple-400" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest mb-0.5">Net Margin Impact</div>
+                <div className="text-[24px] font-black text-purple-400 leading-none">+1.4%</div>
+              </div>
             </div>
-            <span className="text-2xl font-black text-blue-400">+1.4%</span>
+
+            {/* KPI 4 */}
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center">
+                 <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <div className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest mb-0.5">Active Anomalies</div>
+                <div className="text-[24px] font-black text-yellow-400 leading-none">3</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
