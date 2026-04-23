@@ -93,6 +93,33 @@ export default function Dashboard() {
         </div>
       </nav>
 
+      {/* ── Total Impact Header (Critical Review Fix) ── */}
+      <div className="pt-24 max-w-5xl mx-auto px-6 relative z-40">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border border-white/10 p-2 rounded-2xl glass shadow-2xl">
+          <div className="p-4 rounded-xl border border-red-500/20 bg-gradient-to-br from-red-500/10 to-transparent flex flex-col items-center justify-center">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+              <span className="text-[10px] text-white/50 font-mono uppercase tracking-widest">Total Leakage Detected</span>
+            </div>
+            <span className="text-2xl font-black text-red-400">₹12.4M</span>
+          </div>
+          <div className="p-4 rounded-xl border border-green-500/20 bg-gradient-to-br from-green-500/10 to-transparent flex flex-col items-center justify-center">
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldCheck size={12} className="text-green-400" />
+              <span className="text-[10px] text-white/50 font-mono uppercase tracking-widest">Total Recovered</span>
+            </div>
+            <span className="text-2xl font-black text-green-400">₹4.2M</span>
+          </div>
+          <div className="p-4 rounded-xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-transparent flex flex-col items-center justify-center">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+              <span className="text-[10px] text-white/50 font-mono uppercase tracking-widest">Margin Improvement</span>
+            </div>
+            <span className="text-2xl font-black text-blue-400">+1.4%</span>
+          </div>
+        </div>
+      </div>
+
       {/* Frame 1: Hero */}
       <Hero onOpenDocs={() => setIsDocsOpen(true)} />
 

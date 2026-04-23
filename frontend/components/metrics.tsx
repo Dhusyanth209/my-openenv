@@ -216,29 +216,58 @@ export function MetricsGrid() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto max-h-[280px] space-y-2 pr-1" ref={driftRef}>
-              {driftLogs.map((log, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="p-3 rounded-lg"
-                  style={{
-                    background: `${log.color}08`,
-                    border: `1px solid ${log.color}20`,
-                    borderLeft: `2px solid ${log.color}`,
-                  }}
-                >
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <AlertTriangle size={9} style={{ color: log.color }} />
-                    <span className="text-[9px] font-mono font-bold" style={{ color: log.color }}>
-                      [{log.type}]
-                    </span>
+            <div className="flex-1 flex flex-col min-h-0">
+              {/* Highlight Card for Innovation Visual */}
+              <div className="mb-4 p-4 rounded-xl border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-transparent relative overflow-hidden shrink-0">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="animate-spin text-blue-400" style={{ animationDuration: "3s" }}>🔄</span>
+                  <h4 className="text-xs font-bold font-mono tracking-widest text-blue-400">SCHEMA DRIFT EVENT</h4>
+                </div>
+                <div className="grid grid-cols-1 gap-2 text-[11px] font-mono mb-3">
+                  <div className="flex items-center justify-between p-2 bg-black/40 rounded border border-white/5">
+                    <span className="text-zinc-500">OLD FIELD:</span>
+                    <span className="text-zinc-300">hr.status</span>
                   </div>
-                  <div className="text-[11px] text-zinc-400 font-mono leading-relaxed">{log.msg}</div>
-                </motion.div>
-              ))}
+                  <div className="flex items-center justify-between p-2 bg-black/40 rounded border border-blue-500/20">
+                    <span className="text-zinc-500">NEW FIELD:</span>
+                    <span className="text-blue-400 font-bold">employment_lifecycle_state</span>
+                  </div>
+                </div>
+                <div className="space-y-1 text-[10px] font-bold uppercase tracking-wider">
+                  <div className="flex items-center gap-1 text-green-400">
+                    <span className="text-green-500">✅</span> Auto-mapped successfully
+                  </div>
+                  <div className="flex items-center gap-1 text-purple-400">
+                    <span className="text-purple-500">🧠</span> No system failure
+                  </div>
+                </div>
+              </div>
+
+              {/* Scrollable Logs */}
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1" ref={driftRef}>
+                {driftLogs.map((log, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="p-3 rounded-lg"
+                    style={{
+                      background: `${log.color}08`,
+                      border: `1px solid ${log.color}20`,
+                      borderLeft: `2px solid ${log.color}`,
+                    }}
+                  >
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <AlertTriangle size={9} style={{ color: log.color }} />
+                      <span className="text-[9px] font-mono font-bold" style={{ color: log.color }}>
+                        [{log.type}]
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-zinc-400 font-mono leading-relaxed">{log.msg}</div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
 

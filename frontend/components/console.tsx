@@ -295,13 +295,69 @@ export function EnvironmentConsole() {
                               <motion.div
                                 initial={{ opacity: 0, y: 8 }}
                                 animate={{ opacity: 1, y: 0 }}
+                                className="space-y-4"
                               >
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-[10px] font-mono text-green-500 uppercase tracking-widest">✓ Response</span>
+                                {ep.path === "POST /step" && (
+                                  <>
+                                    {/* Leak Evidence Panel */}
+                                    <div className="border border-red-500/30 bg-red-500/5 rounded-xl p-4 relative overflow-hidden mt-4">
+                                      <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                                        <h4 className="text-xs font-bold font-mono tracking-widest text-red-500">LEAK DETECTED: Ghost Payroll</h4>
+                                      </div>
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] font-mono">
+                                        <div className="p-3 bg-black/40 rounded-lg border border-white/5">
+                                          <div className="text-zinc-500 mb-1">HR System:</div>
+                                          <div className="text-zinc-300">- EMP7821 &rarr; Status: <span className="text-red-400 font-bold">Resigned</span></div>
+                                        </div>
+                                        <div className="p-3 bg-black/40 rounded-lg border border-white/5">
+                                          <div className="text-zinc-500 mb-1">Finance System:</div>
+                                          <div className="text-zinc-300">- EMP7821 &rarr; Salary Paid: <span className="text-red-400 font-bold">₹45,000</span></div>
+                                        </div>
+                                      </div>
+                                      <div className="mt-3 inline-block px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-md text-[10px] font-bold text-red-400/90 uppercase tracking-wider">
+                                        ⚠️ Mismatch: Payment after exit &nbsp;|&nbsp; 💰 Monthly Leakage: ₹45,000
+                                      </div>
+                                    </div>
+
+                                    {/* AI Decision Card */}
+                                    <div className="border border-purple-500/30 bg-purple-500/5 rounded-xl p-4">
+                                      <div className="flex items-center gap-2 mb-3">
+                                        <Brain size={14} className="text-purple-400" />
+                                        <h4 className="text-xs font-bold font-mono tracking-widest text-purple-400">AI ACTION DECISION</h4>
+                                      </div>
+                                      <ul className="text-[11px] font-mono text-zinc-300 space-y-2 ml-1">
+                                        <li className="flex items-center gap-2"><Check size={12} className="text-green-500" /> Block salary payment</li>
+                                        <li className="flex items-center gap-2"><Check size={12} className="text-green-500" /> Flag employee account</li>
+                                        <li className="flex items-center gap-2"><Check size={12} className="text-green-500" /> Recover ₹45,000</li>
+                                        <li className="flex items-center gap-2"><Check size={12} className="text-purple-400" /> Reallocate to automation budget</li>
+                                      </ul>
+                                    </div>
+
+                                    {/* Before vs After */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+                                        <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-2">📊 Before Execution</div>
+                                        <div className="text-sm font-bold text-zinc-300">OPM: 29.8%</div>
+                                        <div className="text-[11px] text-red-400/80 font-mono mt-1">Leakage: ₹12.4M</div>
+                                      </div>
+                                      <div className="p-4 rounded-xl border border-green-500/20 bg-gradient-to-br from-green-500/10 to-transparent">
+                                        <div className="text-[10px] font-mono text-green-500 uppercase tracking-widest mb-2">📊 After Recovery</div>
+                                        <div className="text-sm font-bold text-green-400">OPM: 31.2%</div>
+                                        <div className="text-[11px] text-green-400/80 font-mono mt-1">Recovered: ₹4.2M</div>
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
+
+                                <div>
+                                  <div className="flex items-center gap-2 mb-2 mt-4">
+                                    <span className="text-[10px] font-mono text-green-500 uppercase tracking-widest">✓ {ep.path === "POST /step" ? "Raw JSON Export" : "Response"}</span>
+                                  </div>
+                                  <pre className="text-[10px] font-mono text-zinc-400 p-3 rounded-lg overflow-x-auto max-h-48 overflow-y-auto" style={{ background: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.15)" }}>
+                                    {JSON.stringify(responseData[ep.path], null, 2)}
+                                  </pre>
                                 </div>
-                                <pre className="text-[10px] font-mono text-zinc-400 p-3 rounded-lg overflow-x-auto max-h-48 overflow-y-auto" style={{ background: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.15)" }}>
-                                  {JSON.stringify(responseData[ep.path], null, 2)}
-                                </pre>
                               </motion.div>
                             )}
                           </div>
