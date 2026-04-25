@@ -1,14 +1,3 @@
----
-title: MetaAuditor Adversity
-emoji: 🦅
-colorFrom: indigo
-colorTo: purple
-sdk: docker
-pinned: true
-license: mit
-short_description: OpenEnv Grand Finale - Enterprise AI Forensic Auditor powered by Meta Llama-3
----
-
 # 🧠 MetaAuditor: Training an AI Agent to Prevent Enterprise Margin Leakage
 
 ## 🚨 Problem
@@ -47,14 +36,16 @@ Our environment, **MetaAuditor Adversity**, simulates a high-fidelity enterprise
 
 ## 📈 Learning Results
 
+### Before Training:
+* Agent missed obvious anomalies.
+* No capital recovery; margins consistently decayed.
+
 ### After Training:
 * **98% Accuracy** in detecting ghost payroll.
 * **Resilient**: Adapts to schema drift without failure.
 * **Proactive**: Reinvests recovered capital into automation.
 
 ### Training Evidence
-To ensure full compliance with the OpenEnv validation round, we provide evidence of successful model convergence and agent performance.
-
 ![Loss Curve](assets/loss_curve.png)
 ![Reward Curve](assets/reward_curve.png)
 
@@ -88,21 +79,16 @@ Unlike static rule-based systems, MetaAuditor adapts dynamically to system chang
 
 ---
 
-## 🧩 OpenEnv Compliance
-- **Base Class**: Environment inherits from `openenv.Environment` / `MCPEnvironment` (see `server/env/base.py`).
-- **Interface**: Full Gym-style `reset()` / `step()` / `state()` implementation.
-- **Config**: Valid `openenv.yaml` defining action and observation spaces.
-- **Logging**: `inference.py` implements structured `[START]`, `[STEP]`, `[END]` output blocks.
+## 🚀 Why This Matters
+MetaAuditor moves beyond static detection. We train an agent that:
+1. **Learns from interaction** within a live environment.
+2. **Adapts** to changing enterprise systems.
+3. **Improves financial outcomes** continuously over the long-term.
 
-## 🚀 Quickstart
-The environment runs on port `7860`. Use the OpenAPI docs at `/docs` to execute steps.
+---
 
-```bash
-POST /step     # Execute one agent step
-GET  /state    # Read full enterprise state  
-POST /reset    # Restart the simulation
-POST /agent/step  # Let Llama-3 decide autonomously
-```
+## 🏁 Conclusion
+MetaAuditor is not just a model — it is a **learning agent operating inside a dynamic enterprise environment**, capable of preventing financial loss and improving margins autonomously.
 
 ---
 
@@ -112,5 +98,11 @@ POST /agent/step  # Let Llama-3 decide autonomously
 - **Code Repository**: [https://github.com/Dhusyanth03/MetaAuditor-Enterprise](https://github.com/Dhusyanth03/MetaAuditor-Enterprise)
 
 ---
-**Author**: Dhusyanth03
-**License**: MIT
+
+## 🎬 Appendix: Video Demo Script
+*Scene-by-scene guide for the project walkthrough.*
+
+1. **The Hook**: "In a billion-dollar enterprise, a 1% margin leak is 10 million dollars lost."
+2. **The Demo**: Show the MetaAuditor dashboard detecting a Ghost Payroll leak.
+3. **The Brain**: Display the `<thought>` tags showing the agent reasoning through the schema drift.
+4. **The Result**: Show the reward curve climbing as the agent recovers capital.
