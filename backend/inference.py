@@ -27,9 +27,8 @@ import httpx
 warnings.filterwarnings("ignore")
 
 # ─── Environment ───────────────────────────────────────────────────────────────
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
+sys.path.insert(0, os.path.dirname(__file__))
 from server.env.environment import ITMarginEnv
-
 
 # ─── Config ────────────────────────────────────────────────────────────────────
 HF_MODEL_REPO   = os.getenv("AGENT_MODEL_REPO", "Dhusyanth03/meta-auditor-agent-lora")

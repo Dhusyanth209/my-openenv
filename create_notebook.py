@@ -1,0 +1,206 @@
+import json
+
+notebook = {
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# MetaAuditor Adversity - Unsloth Training Script\n",
+        "This notebook fine-tunes Llama-3-8B-Instruct to become a flawless Enterprise Auditor Agent using the `dataset.jsonl` synthetic trajectories.\n",
+        "\n",
+        "**Prerequisites:**\n",
+        "1. Open this file in Google Colab.\n",
+        "2. Go to `Runtime -> Change runtime type -> Hardware accelerator -> T4 GPU`.\n",
+        "3. Upload `dataset.jsonl` to the Colab files section (left menu).\n",
+        "\n",
+        "🚨 **CRITICAL FIX FOR MODULE ERRORS:** 🚨\n",
+        "After running the `pip install` cell below, Google Colab often fails to load newly installed packages immediately. You **MUST** restart the session (`Runtime -> Restart session` or `Ctrl+M .`) BEFORE moving to Step 1, otherwise you will encounter a `ModuleNotFoundError: No module named 'unsloth'`."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": None,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "!pip install \"unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git\"\n",
+        "!pip install --no-deps \"xformers<0.0.28\" \"trl==0.8.6\" peft accelerate bitsandbytes"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 1. Load the Pre-Trained Model\n",
+        "Using Unsloth, we load the model in 4-bit precision to save GPU memory."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": None,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "from unsloth import FastLanguageModel\n",
+        "import torch\n",
+        "\n",
+        "max_seq_length = 2048\n",
+        "dtype = None\n",
+        "load_in_4bit = True\n",
+        "\n",
+        "model, tokenizer = FastLanguageModel.from_pretrained(\n",
+        "    model_name = \"unsloth/llama-3-8b-Instruct-bnb-4bit\",\n",
+        "    max_seq_length = max_seq_length,\n",
+        "    dtype = dtype,\n",
+        "    load_in_4bit = load_in_4bit,\n",
+        ")\n",
+        "\n",
+        "# Attach LoRA Adapters\n",
+        "model = FastLanguageModel.get_peft_model(\n",
+        "    model,\n",
+        "    r = 16,\n",
+        "    target_modules = [\"q_proj\", \"k_proj\", \"v_proj\", \"o_proj\", \"gate_proj\", \"up_proj\", \"down_proj\"],\n",
+        "    lora_alpha = 16,\n",
+        "    lora_dropout = 0,\n",
+        "    bias = \"none\",\n",
+        "    use_gradient_checkpointing = \"unsloth\",\n",
+        "    random_state = 3407,\n",
+        "    use_rslora = False,\n",
+        "    loftq_config = None,\n",
+        ")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 2. Load the MetaAuditor Dataset\n",
+        "We format our trajectories to HuggingFace Dataset format. If you forgot to upload `dataset.jsonl`, the cell below will ask you to upload it."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": None,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "import os\n",
+        "from google.colab import files\n",
+        "\n",
+        "if not os.path.exists('dataset.jsonl'):\n",
+        "    print('dataset.jsonl not found. Please upload it now:')\n",
+        "    uploaded = files.upload()\n",
+        "    if 'dataset.jsonl' not in uploaded:\n",
+        "        raise FileNotFoundError('You must upload dataset.jsonl to continue.')\n",
+        "\n",
+        "from datasets import load_dataset\n",
+        "from unsloth.chat_templates import get_chat_template\n",
+        "\n",
+        "tokenizer = get_chat_template(\n",
+        "    tokenizer,\n",
+        "    chat_template = \"llama-3\",\n",
+        "    mapping = {\"role\": \"from\", \"content\": \"value\", \"user\": \"user\", \"assistant\": \"assistant\"}\n",
+        ")\n",
+        "\n",
+        "def formatting_prompts_func(examples):\n",
+        "    convos = examples[\"conversations\"]\n",
+        "    texts = [tokenizer.apply_chat_template(convo, tokenize = False, add_generation_prompt = False) for convo in convos]\n",
+        "    return { \"text\" : texts }\n",
+        "\n",
+        "dataset = load_dataset(\"json\", data_files=\"dataset.jsonl\", split=\"train\")\n",
+        "dataset = dataset.map(formatting_prompts_func, batched = True)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 3. Train the Model\n",
+        "Fine-tuning begins here. On a T4 GPU, this should take 15-30 minutes for 1,500 samples."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": None,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "from trl import SFTTrainer\n",
+        "from transformers import TrainingArguments\n",
+        "from unsloth import is_bfloat16_supported\n",
+        "\n",
+        "trainer = SFTTrainer(\n",
+        "    model = model,\n",
+        "    tokenizer = tokenizer,\n",
+        "    train_dataset = dataset,\n",
+        "    dataset_text_field = \"text\",\n",
+        "    max_seq_length = max_seq_length,\n",
+        "    dataset_num_proc = 2,\n",
+        "    packing = False,\n",
+        "    args = TrainingArguments(\n",
+        "        per_device_train_batch_size = 2,\n",
+        "        gradient_accumulation_steps = 4,\n",
+        "        warmup_steps = 5,\n",
+        "        max_steps = 60,\n",
+        "        learning_rate = 2e-4,\n",
+        "        fp16 = not is_bfloat16_supported(),\n",
+        "        bf16 = is_bfloat16_supported(),\n",
+        "        logging_steps = 1,\n",
+        "        optim = \"adamw_8bit\",\n",
+        "        weight_decay = 0.01,\n",
+        "        lr_scheduler_type = \"linear\",\n",
+        "        seed = 3407,\n",
+        "        output_dir = \"outputs\",\n",
+        "    ),\n",
+        ")\n",
+        "\n",
+        "trainer_stats = trainer.train()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## 4. Push to HuggingFace\n",
+        "Upload the fine-tuned LoRA adapters to your HuggingFace account so it can be evaluated by OpenEnv."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": None,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        "# Replace with your actual HuggingFace Write Token\n",
+        "HF_TOKEN = \"hf_YOUR_TOKEN_HERE\"\n",
+        "\n",
+        "model.push_to_hub(\"Dhusyanth03/meta-auditor-agent-lora\", token=HF_TOKEN)\n",
+        "tokenizer.push_to_hub(\"Dhusyanth03/meta-auditor-agent-lora\", token=HF_TOKEN)"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {"name": "ipython", "version": 3},
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.10.12"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 4
+}
+
+with open("c:/Users/DHUSYANTH RAMASAMY/OneDrive - Amrita Vishwa Vidyapeetham- Chennai Campus/Desktop/Projects/docker/MetaAuditor-Enterprise/train_meta_auditor_unsloth.ipynb", "w") as f:
+    json.dump(notebook, f, indent=2)
+
+print("Notebook generated successfully.")

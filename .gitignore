@@ -1,5 +1,5 @@
 # Python
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *.pyo
 *.pyd
@@ -9,45 +9,20 @@ dist/
 build/
 *.egg
 
-# Secrets & Environment files
+# Node / Next.js
+node_modules/
+.next/
+frontend/out/
+
+# Secrets
 secret.env
 .env
 *.env
-!.env.example
-.venv/
-venv/
-env/
-.env
 
-# HuggingFace / ML artifacts
-*.bin
-*.safetensors
-*.gguf
-*.pt
-*.pth
-outputs/
-runs/
-
-# Dataset (large file - uploaded to HF separately)
-dataset.jsonl
-
-# Next.js
-meta-auditor-front/.next/
-meta-auditor-front/node_modules/
-meta-auditor-front/.env.local
-
-# Colab notebook generator (not needed for deployment)
-create_notebook.py
-
-# IDE
+# IDEs
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# OS
+# Misc
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log

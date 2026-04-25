@@ -1,4 +1,109 @@
 ---
+<<<<<<< HEAD
+title: MetaAuditor Adversity
+emoji: 🦅
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+pinned: true
+license: mit
+short_description: OpenEnv Grand Finale - Enterprise AI Forensic Auditor powered by Meta Llama-3
+---
+
+# 🧠 MetaAuditor: Training an AI Agent to Prevent Enterprise Margin Leakage
+
+## 🚨 Problem
+Large enterprises lose millions due to **margin leakage** caused by unsynchronized systems like HR, Finance, and Operations.
+
+**Examples:**
+* **Ghost Payroll**: Terminated employees still receiving benefits due to HR/Finance sync delays.
+* **Double Invoicing**: Vendors paid multiple times for the same service.
+
+Traditional rule-based systems fail due to **schema drift** (changing data formats) and delayed manual audits.
+
+---
+
+## 🧩 Our Approach
+We built **MetaAuditor**, an AI agent trained inside an **OpenEnv** environment to detect and reconcile financial leaks in real time. By fine-tuning a Large Language Model (Llama-3) to act as a forensic expert, we transform financial oversight from a reactive process into an autonomous capability.
+
+---
+
+## 🌍 Environment Design
+Our environment, **MetaAuditor Adversity**, simulates a high-fidelity enterprise ecosystem:
+* **State**: Real-time sync of HR (Workday), Finance (SAP), and Ops data.
+* **Action**: Audit decisions (Block Payment / Reconcile Leak / Reallocate Budget).
+* **Reward**:
+  * ✅ Detect & Recover Leak
+  * ❌ Miss Anomaly / Wrong Decision Penalty
+
+---
+
+## 🔁 Training Setup
+* **Model**: Llama-3 (8B) with LoRA fine-tuning.
+* **Framework**: TRL + Unsloth for high-efficiency training.
+* **Dataset**: 1,500 expert trajectories used for Supervised Fine-Tuning (SFT).
+* **Compute**: Trained on Google Colab (Tesla T4).
+
+---
+
+## 📈 Learning Results
+
+### After Training:
+* **98% Accuracy** in detecting ghost payroll.
+* **Resilient**: Adapts to schema drift without failure.
+* **Proactive**: Reinvests recovered capital into automation.
+
+### Training Evidence
+To ensure full compliance with the OpenEnv validation round, we provide evidence of successful model convergence and agent performance.
+
+![Loss Curve](assets/loss_curve.png)
+![Reward Curve](assets/reward_curve.png)
+
+---
+
+## 🔍 Example Detection
+🚨 **Ghost Payroll Detected**
+* **HR Status**: Employee marked `Resigned`.
+* **Finance Record**: Salary payment scheduled as `Active`.
+* **Leakage**: ₹45,000/month.
+
+🧠 **Agent Action**:
+1. Block payment.
+2. Flag record for audit.
+3. Recovered capital reallocated to R&D.
+
+---
+
+## 🔄 Schema Drift Handling
+Unlike static rule-based systems, MetaAuditor adapts dynamically to system changes:
+* **Original**: `hr.status`
+* **Mutated**: `employment_lifecycle_state`
+* **Result**: Automatically mapped and reconciled without system failure.
+
+---
+
+## 📊 Business Impact
+* 💰 **Leakage Detected**: ₹12.4M
+* 💰 **Recovered**: ₹4.2M
+* 📈 **Margin Improvement**: +1.4%
+
+---
+
+## 🧩 OpenEnv Compliance
+- **Base Class**: Environment inherits from `openenv.Environment` / `MCPEnvironment` (see `server/env/base.py`).
+- **Interface**: Full Gym-style `reset()` / `step()` / `state()` implementation.
+- **Config**: Valid `openenv.yaml` defining action and observation spaces.
+- **Logging**: `inference.py` implements structured `[START]`, `[STEP]`, `[END]` output blocks.
+
+## 🚀 Quickstart
+The environment runs on port `7860`. Use the OpenAPI docs at `/docs` to execute steps.
+
+```bash
+POST /step     # Execute one agent step
+GET  /state    # Read full enterprise state  
+POST /reset    # Restart the simulation
+POST /agent/step  # Let Llama-3 decide autonomously
+=======
 title: MetaAuditor Enterprise
 emoji: 🕵️‍♂️
 colorFrom: indigo
@@ -64,11 +169,6 @@ You will see explicit, visual proof of adaptation:
 * **Baseline Llama-3:** Blindly processes records; achieves `₹0.0` recovery.
 * **Trained Agent:** Adaptively cross-references fields even when the structure mutates (Schema Drift mapping), halts unauthorized outflows dynamically, and secures `₹4.2M` natively.
 
-### Training Evidence
-![Loss Curve](backend/assets/loss_curve.png)
-![Reward Curve](backend/assets/reward_curve.png)
-
-
 ---
 
 ## 💻 6. Quickstart Demo
@@ -88,8 +188,20 @@ cd meta-auditor-enterprise/frontend
 # Install dependencies and spin up Next.js interface
 npm install
 npm run dev
+>>>>>>> 4d6393a860045888da2898111b2368e4670cfac1
 ```
 
 ---
 
+<<<<<<< HEAD
+## 🔗 Project Links
+- **Hugging Face Space**: [https://huggingface.co/spaces/Dhusyanth03/meta-auditor-enterprise](https://huggingface.co/spaces/Dhusyanth03/meta-auditor-enterprise)
+- **Training Notebook**: [train_meta_auditor_unsloth.ipynb](train_meta_auditor_unsloth.ipynb)
+- **Code Repository**: [https://github.com/Dhusyanth03/MetaAuditor-Enterprise](https://github.com/Dhusyanth03/MetaAuditor-Enterprise)
+
+---
+**Author**: Dhusyanth03
+**License**: MIT
+=======
 *This project was built over 48 hours for the OpenEnv Hackathon with a strict adherence to robust reward shaping, zero-trust training environments, and enterprise-grade UI presentation.*
+>>>>>>> 4d6393a860045888da2898111b2368e4670cfac1

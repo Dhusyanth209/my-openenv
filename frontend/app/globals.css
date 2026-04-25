@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #818cf8;
+  --color-secondary: #c084fc;
+  --color-accent: #38bdf8;
+  --font-geist-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --glow-primary: rgba(129, 140, 248, 0.4);
+  --glow-secondary: rgba(192, 132, 252, 0.3);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: #000;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* ─── Noise Grain Overlay ─── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 9998;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.15s steps(1) infinite;
+}
+@keyframes grain {
+  0%, 100% { transform: translate(0,0); }
+  10% { transform: translate(-2%,-1%); }
+  20% { transform: translate(1%,2%); }
+  30% { transform: translate(-1%,1%); }
+  40% { transform: translate(2%,-2%); }
+  50% { transform: translate(-2%,2%); }
+  60% { transform: translate(1%,-1%); }
+  70% { transform: translate(2%,1%); }
+  80% { transform: translate(-1%,2%); }
+  90% { transform: translate(1%,-2%); }
+}
+
+/* ─── Ambient Gradient Background ─── */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(99,102,241,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 60%, rgba(168,85,247,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 20% 80%, rgba(56,189,248,0.08) 0%, transparent 60%);
+}
+
+/* ─── Glass Card ─── */
+.glass {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ─── Custom Scrollbar ─── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(129,140,248,0.3); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(129,140,248,0.5); }
+
+/* ─── Glow Pulse Animation ─── */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 40px 10px var(--glow-primary); }
+  50% { box-shadow: 0 0 80px 20px var(--glow-secondary); }
+}
+.glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
+
+/* ─── Gradient Text ─── */
+.gradient-text {
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-primary {
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Marquee ─── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track { animation: marquee 30s linear infinite; }
+.marquee-track:hover { animation-play-state: paused; }
